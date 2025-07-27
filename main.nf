@@ -28,7 +28,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_data
 workflow EBIMETAGENOMICS_DATAGRABBER {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    samplesheet // channel: samplesheet read in from --input (optional for this pipeline)
 
     main:
 
@@ -38,6 +38,10 @@ workflow EBIMETAGENOMICS_DATAGRABBER {
     DATAGRABBER (
         samplesheet
     )
+    
+    emit:
+    fastq_files = DATAGRABBER.out.fastq_files
+    samplesheet = DATAGRABBER.out.samplesheet
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,14 +61,14 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input
+        params.input ?: null
     )
 
     //
     // WORKFLOW: Run main workflow
     //
     EBIMETAGENOMICS_DATAGRABBER (
-        PIPELINE_INITIALISATION.out.samplesheet
+        Channel.empty() // No input samplesheet needed for ENA downloads
     )
     //
     // SUBWORKFLOW: Run completion tasks
