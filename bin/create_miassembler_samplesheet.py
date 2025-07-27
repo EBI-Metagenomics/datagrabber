@@ -5,7 +5,7 @@ import urllib.parse
 import argparse
 from pathlib import Path
 
-def create_samplesheet(metadata_file, study_accession, assembler, memory, contaminant_reference, outdir, output_file='samplesheet.csv'):
+def create_samplesheet(metadata_file, study_accession, assembler, memory, contaminant_reference, outdir, output_file='samplesheet.csv', library_strategy_filter=None):
     """Create a samplesheet CSV with metadata for pipeline input."""
     sample_data = []
     
@@ -22,6 +22,12 @@ def create_samplesheet(metadata_file, study_accession, assembler, memory, contam
             
             if not fastq_urls or not fastq_urls.strip():
                 continue
+            
+            # Apply library strategy filter if provided
+            if library_strategy_filter:
+                filter_library_strategy = library_strategy_filter.lower()
+                if library_strategy.lower() == filter_library_strategy:
+                    continue
             
             urls = [url.strip() for url in fastq_urls.split(';') if url.strip()]
             
@@ -75,6 +81,7 @@ def main():
     parser.add_argument('--contaminant-reference', default='', help='Contaminant reference file')
     parser.add_argument('--outdir', required=True, help='Output directory path')
     parser.add_argument('--output', default='samplesheet.csv', help='Output samplesheet file')
+    parser.add_argument('--library-strategy-filter', help='Library strategy to exclude from samplesheet')
     
     args = parser.parse_args()
     
@@ -85,7 +92,8 @@ def main():
         args.memory,
         args.contaminant_reference,
         args.outdir,
-        args.output
+        args.output,
+        args.library_strategy_filter
     )
 
 if __name__ == "__main__":

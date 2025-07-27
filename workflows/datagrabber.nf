@@ -92,6 +92,7 @@ workflow DATAGRABBER {
             params.memory,
             params.contaminant_reference,
             params.outdir,
+            params.library_strategy_filter,
         )
         ch_versions = ch_versions.mix(CREATE_MIASSEMBLER_SAMPLESHEET.out.versions)
         ch_samplesheet = CREATE_MIASSEMBLER_SAMPLESHEET.out.samplesheet

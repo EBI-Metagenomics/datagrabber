@@ -14,6 +14,7 @@ process CREATE_MIASSEMBLER_SAMPLESHEET {
     val memory
     val contaminant_reference
     val outdir
+    val library_strategy_filter
 
     output:
     path "miassembler_samplesheet.csv", emit: samplesheet
@@ -23,6 +24,7 @@ process CREATE_MIASSEMBLER_SAMPLESHEET {
     task.ext.when == null || task.ext.when
 
     script:
+    def library_strategy_arg = library_strategy_filter ? "--library-strategy-filter ${library_strategy_filter}" : ""
     """
     create_miassembler_samplesheet.py ${filtered_metadata} \\
         --study-accession ${study_accession} \\
@@ -30,7 +32,8 @@ process CREATE_MIASSEMBLER_SAMPLESHEET {
         --memory ${memory} \\
         --contaminant-reference ${contaminant_reference} \\
         --outdir ${outdir} \\
-        --output miassembler_samplesheet.csv
+        --output miassembler_samplesheet.csv \\
+        ${library_strategy_arg}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
