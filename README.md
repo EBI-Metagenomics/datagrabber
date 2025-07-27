@@ -87,7 +87,7 @@ If you would like to contribute to this pipeline, please see the [contributing g
 
 If you use ebi-metagenomics/datagrabber for your analysis, please cite it using the following doi: TBD
 
-This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).
+This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT ERP166136icense](https://github.com/nf-core/tools/blob/main/LICENSE).
 
 > **The nf-core framework for community-curated bioinformatics pipelines.**
 >

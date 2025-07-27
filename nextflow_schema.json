@@ -90,18 +90,16 @@
                     "enum": ["metaspades", "spades", "megahit", "flye"]
                 },
                 "memory": {
-                    "type": "string",
-                    "default": "350",
+                    "type": "number",
+                    "default": 350,
                     "description": "Memory allocation for assembly process (GB).",
-                    "fa_icon": "fas fa-memory",
-                    "pattern": "^[0-9]+$"
+                    "fa_icon": "fas fa-memory"
                 },
                 "contaminant_reference": {
                     "type": "string",
-                    "description": "Path to contaminant reference file.",
+                    "description": "Name of the miassembler reference genome used to decontaminate the reads and assembly.",
                     "help_text": "Optional path to a contaminant reference file for decontamination.",
-                    "fa_icon": "fas fa-file",
-                    "format": "file-path"
+                    "fa_icon": "fas fa-file"
                 }
             }
         },
