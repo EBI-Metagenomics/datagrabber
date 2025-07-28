@@ -58,12 +58,34 @@ workflow DATAGRABBER {
         }
         .map { row ->
             def fastq_urls = row.fastq_ftp?.split(';')?.collect { it.trim() }?.findAll { it }
-            def fastq1 = fastq_urls && fastq_urls.size() >= 1 ? "ftp://${fastq_urls[0]}" : null
-            def fastq2 = fastq_urls && fastq_urls.size() >= 2 ? "ftp://${fastq_urls[1]}" : null
+            
+            // For PAIRED layout, prefer files with _1 and _2 suffixes
+            def fastq1 = null
+            def fastq2 = null
+            
+            if (row.library_layout?.toLowerCase() == 'paired' && fastq_urls?.size() > 2) {
+                // Look for _1 and _2 paired files
+                def paired1 = fastq_urls.find { it.contains('_1.fastq') }
+                def paired2 = fastq_urls.find { it.contains('_2.fastq') }
+                
+                if (paired1 && paired2) {
+                    fastq1 = "ftp://${paired1}"
+                    fastq2 = "ftp://${paired2}"
+                } else {
+                    // Fallback to first two files if _1/_2 pattern not found
+                    fastq1 = fastq_urls && fastq_urls.size() >= 1 ? "ftp://${fastq_urls[0]}" : null
+                    fastq2 = fastq_urls && fastq_urls.size() >= 2 ? "ftp://${fastq_urls[1]}" : null
+                }
+            } else {
+                // For SINGLE layout or when not enough files, use original logic
+                fastq1 = fastq_urls && fastq_urls.size() >= 1 ? "ftp://${fastq_urls[0]}" : null
+                fastq2 = fastq_urls && fastq_urls.size() >= 2 ? "ftp://${fastq_urls[1]}" : null
+            }
 
             def meta = [
                 study_accession: params.study_accession,
                 run_accession: row.run_accession,
+                library_layout: row.library_layout,
             ]
 
             [meta, fastq1, fastq2]
