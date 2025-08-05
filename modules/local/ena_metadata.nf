@@ -11,6 +11,8 @@ process ENA_METADATA {
 
     input:
     val study_accession
+    val library_strategy_filter
+    path run_accessions_filter
 
     output:
     path ("ena_metadata.tsv"), emit: metadata
@@ -21,8 +23,10 @@ process ENA_METADATA {
 
     script:
     def args = task.ext.args ?: ''
+    def library_filter_arg = library_strategy_filter ? "--library-strategy-filter ${library_strategy_filter}" : ""
+    def run_filter_arg = run_accessions_filter.name != 'OPTIONAL_FILE' ? "--run-accessions-filter ${run_accessions_filter}" : ""
     """
-    ena_metadata.py ${study_accession} ${args} --output ena_metadata.tsv
+    ena_metadata.py ${study_accession} ${args} --output ena_metadata.tsv ${library_filter_arg} ${run_filter_arg}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

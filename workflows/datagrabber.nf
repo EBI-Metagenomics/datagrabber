@@ -28,34 +28,22 @@ workflow DATAGRABBER {
     //
     // MODULE: Download ENA metadata
     //
+    ch_run_accessions_filter = params.run_accessions_filter ? 
+        Channel.fromPath(params.run_accessions_filter, checkIfExists: true) : 
+        file('OPTIONAL_FILE')
+    
     ENA_METADATA(
-        params.study_accession
+        params.study_accession,
+        params.library_strategy_filter,
+        ch_run_accessions_filter
     )
     ch_versions = ch_versions.mix(ENA_METADATA.out.versions)
 
     //
-    // Split filtered metadata into individual download tasks
+    // Split metadata into individual download tasks
     //
     ENA_METADATA.out.metadata
         .splitCsv(header: true, sep: '\t')
-        .filter { row ->
-            // Apply library strategy filter if provided
-            if (params.library_strategy_filter) {
-                def library_strategy = row.library_strategy?.toLowerCase()
-                def filter_library_strategy = params.library_strategy_filter.toLowerCase()
-                if (library_strategy == filter_library_strategy) {
-                    log.info("Skipping sample ${row.run_accession} because library_source is ${row.library_strategy}")
-                    return false
-                }
-            }
-            // Skip if no FASTQ URLs
-            def fastq_urls = row.fastq_ftp
-            if (!fastq_urls || fastq_urls.trim().isEmpty()) {
-                log.info("No FASTQ URLs found for ${row.run_accession}, skipping")
-                return false
-            }
-            return true
-        }
         .map { row ->
             def fastq_urls = row.fastq_ftp?.split(';')?.collect { it.trim() }?.findAll { it }
             
@@ -90,7 +78,6 @@ workflow DATAGRABBER {
 
             [meta, fastq1, fastq2]
         }
-        .filter { it[1] != null }
         .set { ch_files_to_download }
 
     //
@@ -114,7 +101,6 @@ workflow DATAGRABBER {
             params.memory,
             params.contaminant_reference,
             params.outdir,
-            params.library_strategy_filter,
         )
         ch_versions = ch_versions.mix(CREATE_MIASSEMBLER_SAMPLESHEET.out.versions)
         ch_samplesheet = CREATE_MIASSEMBLER_SAMPLESHEET.out.samplesheet

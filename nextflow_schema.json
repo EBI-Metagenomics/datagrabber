@@ -57,6 +57,15 @@
                     "description": "Library strategy to exclude from downloads.",
                     "help_text": "Specify a library strategy (e.g., AMPLICON, WGS, RNA-Seq) to exclude samples with that strategy from being downloaded.",
                     "fa_icon": "fas fa-filter"
+                },
+                "run_accessions_filter": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\.txt$",
+                    "description": "Path to text file containing run accessions to include (one per line).",
+                    "help_text": "Provide a text file with run accessions (one per line) to download only those specific runs from the study. If not provided, all runs in the study will be downloaded.",
+                    "fa_icon": "fas fa-list"
                 }
             }
         },
