@@ -72,7 +72,7 @@
                     "description": "Format of the output samplesheet.",
                     "help_text": "Choose the format for the output samplesheet based on the downstream pipeline you want to use.",
                     "fa_icon": "fas fa-table",
-                    "enum": ["miassembler"]
+                    "enum": ["miassembler", "ggp"]
                 }
             }
         },

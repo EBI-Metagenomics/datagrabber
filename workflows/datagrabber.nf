@@ -8,6 +8,7 @@ include { softwareVersionsToYAML         } from '../subworkflows/nf-core/utils_n
 include { ENA_METADATA                   } from '../modules/local/ena_metadata'
 include { DOWNLOAD_FASTQ                 } from '../modules/local/download_fastq'
 include { CREATE_MIASSEMBLER_SAMPLESHEET } from '../modules/local/create_miassembler_samplesheet'
+include { CREATE_GGP_SAMPLESHEET         } from '../modules/local/create_ggp_samplesheet'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,6 +119,15 @@ workflow DATAGRABBER {
         )
         ch_versions = ch_versions.mix(CREATE_MIASSEMBLER_SAMPLESHEET.out.versions)
         ch_samplesheet = CREATE_MIASSEMBLER_SAMPLESHEET.out.samplesheet
+    } else if (params.samplesheet_format == 'ggp') {
+        CREATE_GGP_SAMPLESHEET(
+            ENA_METADATA.out.metadata,
+            params.study_accession,
+            params.outdir,
+            params.library_strategy_filter,
+        )
+        ch_versions = ch_versions.mix(CREATE_GGP_SAMPLESHEET.out.versions)
+        ch_samplesheet = CREATE_GGP_SAMPLESHEET.out.samplesheet
     }
 
     //
