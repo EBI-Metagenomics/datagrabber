@@ -28,14 +28,14 @@ workflow DATAGRABBER {
     //
     // MODULE: Download ENA metadata
     //
-    ch_run_accessions_filter = params.run_accessions_filter ? 
-        Channel.fromPath(params.run_accessions_filter, checkIfExists: true) : 
+    ch_run_accessions_include = params.run_accessions_include ? 
+        Channel.fromPath(params.run_accessions_include, checkIfExists: true) : 
         file('OPTIONAL_FILE')
     
     ENA_METADATA(
         params.study_accession,
         params.library_strategy_filter,
-        ch_run_accessions_filter
+        ch_run_accessions_include
     )
     ch_versions = ch_versions.mix(ENA_METADATA.out.versions)
 

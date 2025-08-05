@@ -17,7 +17,7 @@ def filter_metadata(
     input_file: str,
     output_file: str,
     library_strategy_filter: Optional[str] = None,
-    run_accessions_filter: Optional[str] = None,
+    run_accessions_include: Optional[str] = None,
 ) -> None:
     """
     Filter the metadata TSV file based on library strategy and run accessions.
@@ -25,16 +25,16 @@ def filter_metadata(
     :param input_file: Path to input TSV file
     :param output_file: Path to output filtered TSV file
     :param library_strategy_filter: Library strategy to exclude (case-insensitive)
-    :param run_accessions_filter: Path to file with allowed run accessions (one per line)
+    :param run_accessions_include: Path to file with allowed run accessions (one per line)
     """
     allowed_runs: Optional[Set[str]] = None
-    if run_accessions_filter:
+    if run_accessions_include:
         try:
-            with open(run_accessions_filter, 'r') as f:
+            with open(run_accessions_include, 'r') as f:
                 allowed_runs = {line.strip() for line in f if line.strip()}
-            logger.info(f"Loaded {len(allowed_runs)} allowed run accessions from {run_accessions_filter}")
+            logger.info(f"Loaded {len(allowed_runs)} allowed run accessions from {run_accessions_include}")
         except FileNotFoundError:
-            logger.error(f"Run accessions filter file not found: {run_accessions_filter}")
+            logger.error(f"Run accessions include file not found: {run_accessions_include}")
             sys.exit(1)
     
     filtered_count = 0
@@ -120,21 +120,21 @@ def main():
     parser.add_argument("study_accession", help="ENA study accession (e.g., SRP493956)")
     parser.add_argument("--output", default="metadata.tsv", help="Output file name")
     parser.add_argument("--library-strategy-filter", help="Library strategy to exclude (case-insensitive)")
-    parser.add_argument("--run-accessions-filter", help="Path to file with allowed run accessions (one per line)")
+    parser.add_argument("--run-accessions-include", help="Path to file with allowed run accessions (one per line)")
 
     args = parser.parse_args()
 
     # Download metadata first
-    raw_output = "raw_metadata.tsv" if (args.library_strategy_filter or args.run_accessions_filter) else args.output
+    raw_output = "raw_metadata.tsv" if (args.library_strategy_filter or args.run_accessions_include) else args.output
     download_ena_metadata(args.study_accession, raw_output)
     
     # Apply filters if any are specified
-    if args.library_strategy_filter or args.run_accessions_filter:
+    if args.library_strategy_filter or args.run_accessions_include:
         filter_metadata(
             raw_output,
             args.output,
             args.library_strategy_filter,
-            args.run_accessions_filter
+            args.run_accessions_include
         )
         # Clean up raw file if it's different from output
         if raw_output != args.output:

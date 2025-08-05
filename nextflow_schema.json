@@ -58,7 +58,7 @@
                     "help_text": "Specify a library strategy (e.g., AMPLICON, WGS, RNA-Seq) to exclude samples with that strategy from being downloaded.",
                     "fa_icon": "fas fa-filter"
                 },
-                "run_accessions_filter": {
+                "run_accessions_include": {
                     "type": "string",
                     "format": "file-path",
                     "exists": true,

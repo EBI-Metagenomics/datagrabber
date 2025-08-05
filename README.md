@@ -57,6 +57,16 @@ For details about the output files and reports, see [docs/output.md](docs/output
        -profile docker
    ```
 
+   To download only specific runs from a study, create a text file with run accessions (one per line) and use the `--run_accessions_include` parameter:
+
+   ```bash
+   nextflow run ebi-metagenomics/datagrabber \
+       --study_accession <ENA_STUDY_ACCESSION> \
+       --run_accessions_include runs_to_include.txt \
+       --outdir <OUTDIR> \
+       -profile docker
+   ```
+
 ## Parameters
 
 ### Required parameters
@@ -67,6 +77,7 @@ For details about the output files and reports, see [docs/output.md](docs/output
 ### Optional parameters
 
 - `--library_strategy_filter`: Library strategy to exclude from downloads (e.g., AMPLICON)
+- `--run_accessions_include`: Path to text file containing run accessions to include (one per line). If not provided, all runs in the study will be downloaded
 - `--samplesheet_format`: Format of output samplesheet (default: miassembler)
 - `--assembler`: Assembler to use for miassembler pipeline (default: metaspades)
 - `--memory`: Memory allocation for assembly process in GB (default: 350)
