@@ -24,7 +24,7 @@ process ENA_METADATA {
     script:
     def args = task.ext.args ?: ''
     def library_filter_arg = library_strategy_filter ? "--library-strategy-filter ${library_strategy_filter}" : ""
-    def run_filter_arg = run_accessions_include.name != 'OPTIONAL_FILE' ? "--run-accessions-include ${run_accessions_include}" : ""
+    def run_filter_arg = run_accessions_include ? "--run-accessions-include ${run_accessions_include}" : ""
     """
     ena_metadata.py ${study_accession} ${args} --output ena_metadata.tsv ${library_filter_arg} ${run_filter_arg}
 

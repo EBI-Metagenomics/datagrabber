@@ -30,12 +30,12 @@ workflow DATAGRABBER {
     //
     ch_run_accessions_include = params.run_accessions_include ? 
         Channel.fromPath(params.run_accessions_include, checkIfExists: true) : 
-        file('OPTIONAL_FILE')
+        channel.empty()
     
     ENA_METADATA(
         params.study_accession,
         params.library_strategy_filter,
-        ch_run_accessions_include
+        ch_run_accessions_include.ifEmpty([])
     )
     ch_versions = ch_versions.mix(ENA_METADATA.out.versions)
 
@@ -116,7 +116,6 @@ workflow DATAGRABBER {
             sort: true,
             newLine: true,
         )
-        .set { ch_collated_versions }
 
     emit:
     fastq_files = DOWNLOAD_FASTQ.out.fastq_files // channel: [ meta, [fastq_files] ]
